@@ -13,14 +13,14 @@ func (s *Server) GetBalanceHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode("invalid id")
+		json.NewEncoder(w).Encode(`{"error": "invalid id"}`)
 		slog.Warn("invalid id", "account_id", id)
 		return
 	}
 	account, ok := accounts[id]
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode("account not found")
+		json.NewEncoder(w).Encode(`{"error": "account not found"}`)
 		slog.Warn("account not found", "account_id", id)
 		return
 	}

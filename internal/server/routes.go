@@ -30,6 +30,7 @@ func (s *Server) CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
 	defer mu.Unlock()
 	if _, ok := accounts[nextID]; ok {
 		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(`{"error": "account already exists"}`)
 		slog.Warn("account already exists", "account_id", nextID)
 		return
 	}

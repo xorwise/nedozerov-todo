@@ -13,6 +13,7 @@ func (s *Server) WithdrawHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(`{"error": "invalid id"}`)
 		json.NewEncoder(w).Encode("invalid id")
 		slog.Warn("invalid id", "account_id", id)
 		return
@@ -20,7 +21,7 @@ func (s *Server) WithdrawHandler(w http.ResponseWriter, r *http.Request) {
 	account, ok := accounts[id]
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode("account not found")
+		json.NewEncoder(w).Encode(`{"error": "account not found"}`)
 		slog.Warn("account not found", "account_id", id)
 		return
 	}
@@ -28,7 +29,7 @@ func (s *Server) WithdrawHandler(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode("invalid request")
+		json.NewEncoder(w).Encode(`{"error": "invalid request"}`)
 		slog.Warn("invalid request", "account_id", id)
 		return
 	}
@@ -44,7 +45,7 @@ func (s *Server) WithdrawHandler(w http.ResponseWriter, r *http.Request) {
 	case err := <-ch:
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err)
+			json.NewEncoder(w).Encode(`{"error": "` + err.Error() + `"}`)
 			slog.Warn(err.Error(), "account_id", id)
 			return
 		}
