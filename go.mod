@@ -1,4 +1,4 @@
-module nedozerov-todo
+module github.com/xorwise/nedozerov-todo
 
 go 1.22.1
 
